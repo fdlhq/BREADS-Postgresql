@@ -1,0 +1,26 @@
+<%- include('../partials/header') %>
+<div class="container">      
+<div class="title-header"><h1>Adding Data</h1></div>
+      <form action="" method="post">
+        <div class="row mb-3">
+          <label for="title" class="col-sm-2 col-form-label">Title</label>
+          <div class="col-sm-10"><input
+            type="text"
+            class="form-control"
+            name="title"
+            placeholder="Insert your title"
+            required
+          />
+        </div>
+        </div>
+        <div style="padding: 10px; background-color: rgb(245, 245, 245); margin-top: 20px;">
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-floppy-disk" style="color: #ffffff;"></i>
+          </button>
+          <a href="/users" class="btn btn-warning">
+            <i class="fa-solid fa-rotate"></i>
+          </a>
+        </div>
+        </div>
+      </form>
+    <%- include('../partials/footer') %>

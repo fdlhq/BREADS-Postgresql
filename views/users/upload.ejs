@@ -1,0 +1,49 @@
+<%- include('../partials/header') %>
+<div class="container">
+  <div class="head">
+    <h1>Change Avatar</h1>
+  </div>
+  <form
+    ref="uploadForm"
+    id="uploadForm"
+    action="/users/upload"
+    method="post"
+    encType="multipart/form-data"
+  >
+    <div class="row mb-3 mt-3 px-3">
+      <label for="title" class="col-sm-2 col-form-label">Avatar</label>
+      <div class="col-sm-10">
+        <input class="form-control" id="avatar" type="file" name="avatar" />
+      </div>
+    </div>
+    <div class="row mb-3 mt-3 px-3">
+      <label for="title" class="col-sm-2 col-form-label">Preview</label>
+      <div class="col-sm-10">
+        <img
+          id="avatarImg"
+          src="<%= preAvatar? `../images/${preAvatar}` : `../images/avatar_default.jpeg` %>"
+          alt="avatar"
+          class="preview"
+        />
+      </div>
+    </div>
+    <div class="foot2">
+      <button type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-floppy-disk"></i>
+      </button>
+      <a class="btn btn-warning" href="/users"
+        ><i class="fa-solid fa-rotate-left"></i
+      ></a>
+    </div>
+  </form>
+</div>
+<script>
+  avatar.onchange = () => {
+    const [file] = avatar.files;
+    if (file) {
+      avatarImg.src = URL.createObjectURL(file);
+    }
+  };
+</script>
+
+<%- include('../partials/footer') %>

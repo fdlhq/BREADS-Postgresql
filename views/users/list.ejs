@@ -1,0 +1,428 @@
+<%- include('../partials/header') %>
+<div class="title-header-ava">
+  <div class="ava">
+    <a id="uploadForm" href="/users/upload"
+      ><img
+        class="pp"
+        src="<%= preAvatar? `../images/${preAvatar}` : `../images/avatar_default.jpeg` %>"
+        
+    /></a>
+    &nbsp &nbsp
+    <h3><%= user.email %></h3>
+  </div>
+  <div style="display: grid; place-items: center">
+    <a href="/logout" class="btn btn-secondary"
+      ><i class="fa-solid fa-right-from-bracket"></i> sign out</a
+    >
+  </div>
+</div>
+<div class="title-header">
+  <h1>PostgreSQL BREADS (Browse, Read, Edit, Add, Delete, Sort)</h1>
+</div>
+<form action="/users" method="get">
+  <input type="hidden" name="page" value="1" />
+  <input type="hidden" name="sort" value="<%= sort %>" />
+  <input type="hidden" name="sortby" value="<%= sortby %>" />
+  <div class="row mb-3">
+    <label for="title" class="col-sm-2 col-form-label">Title</label>
+    <div class="col-sm-10">
+      <input
+        class="form-control"
+        type="text"
+        name="title"
+        id="title"
+        placeholder="Insert your title"
+        value="<%= query.title %>"
+      />
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="deadline" class="col-sm-2 col-form-label">Deadline</label>
+    <div class="col-sm-10">
+      <div class="row">
+        <div class="col">
+          <input
+            class="form-control"
+            type="date"
+            class="input-section-date"
+            name="startdate"
+            value="<%= query.startdate %>"
+          />
+        </div>
+        <div class="col">
+          <input
+            class="form-control"
+            type="date"
+            class="input-section-date"
+            name="enddate"
+            value="<%= query.enddate %>"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="complete" class="col-sm-2 col-form-label">Complete</label>
+    <div class="col-sm-10">
+      <% if(query.complete == 'true' ) { %>
+      <select class="form-control" name="complete">
+        <option disabled>-Select complete-</option>
+        <option value="true" selected>Yes</option>
+        <option value="false">Not Yet</option>
+      </select>
+      <% } else if (query.complete=='0' ) { %>
+      <select class="form-control" name="complete">
+        <option disabled>-select complete-</option>
+        <br />
+        <option value="true">Yes</option>
+        <option value="false" selected>Not Yet</option>
+      </select>
+      <% } else { %>
+      <select class="form-control" name="complete">
+        <option disabled selected>-select complete-</option>
+        <br />
+        <option value="true">Done</option>
+        <option value="false">Not Yet</option>
+      </select>
+      <% } %>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="complete" class="col-sm-2 col-form-label">Operation</label>
+    <div class="col-sm-10">
+      <% if(query.mode=='OR' ) { %>
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="mode"
+          id="or"
+          value="OR"
+          checked
+        />
+        <label class="form-check-label" for="or">OR</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="mode"
+          id="and"
+          value="AND"
+        />
+        <label class="form-check-label" for="and">AND</label>
+      </div>
+      <% } else if(query.mode=='AND' ) { %>
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="mode"
+          id="or"
+          value="OR"
+          checked
+        />
+        <label class="form-check-label" for="or">OR</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="mode"
+          id="and"
+          value="AND"
+        />
+        <label class="form-check-label" for="and">AND</label>
+      </div>
+      <% } else { %>
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="mode"
+          id="or"
+          value="OR"
+          checked
+        />
+        <label class="form-check-label" for="or">OR</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="mode"
+          id="and"
+          value="AND"
+        />
+        <label class="form-check-label" for="and">AND</label>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-info">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+  <a href="/users" class="btn btn-warning">
+    <i class="fa-solid fa-rotate"></i>
+  </a>
+</form>
+<br />
+
+<table
+  class="table table-striped-columns"
+  style="border-top: 2px solid #dee2e6; margin-top: 5px"
+>
+  <thead>
+    <tr>
+      <th style="padding: 25px 0px 5px 5px">No.</th>
+      <th>
+        <a
+          style="padding: 25px 0px 5px 5px; color: black"
+          href="/users<%= url.replace(`sortby=${sortby}`, `sortby=title`).replace(`sort=${sort}`, `sort=${sort == 'desc' ? 'asc' : 'desc'}`) %>"
+          ><i
+            class="fa-solid fa-<%= sortby == 'title' ? sort=='desc' ? 'sort-down' : 'sort-up' : 'sort' %>"
+          ></i
+        ></a>
+        Title
+      </th>
+      <th>
+        <a
+          style="padding: 25px 0px 5px 5px; color: black"
+          href="/users<%= url.replace(`sortby=${sortby}`, `sortby=complete`).replace(`sort=${sort}`, `sort=${sort == 'desc' ? 'asc' : 'desc'}`) %>"
+          ><i
+            class="fa-solid fa-<%= sortby == 'complete' ? sort=='desc' ? 'sort-down' : 'sort-up' : 'sort' %>"
+          ></i
+        ></a>
+        Complete
+      </th>
+      <th>
+        <a
+          style="padding: 25px 0px 5px 5px; color: black"
+          href="/users<%= url.replace(`sortby=${sortby}`, `sortby=deadline`).replace(`sort=${sort}`, `sort=${sort == 'desc' ? 'asc' : 'desc'}`) %>"
+          ><i
+            class="fa-solid fa-<%= sortby == 'deadline' ? sort=='desc' ? 'sort-down' : 'sort-up' : 'sort' %>"
+          ></i
+        ></a>
+        Deadline
+      </th>
+      <th style="padding: 25px 0px 5px 5px">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% data.forEach((item, index)=> { %> <% if (new
+    Date(`${item.deadline}`).getTime() < new Date().getTime() && !item.complete)
+    { %>
+    <tr>
+      <td style="background-color: red"><%= index + offset + 1 %></td>
+      <td style="background-color: red"><%= item.title %></td>
+      <td style="background-color: red">
+        <%= item.complete? "Done" : "Not Yet" %>
+      </td>
+      <td style="background-color: red">
+        <%= moment(item.deadline).locale('id').format('Do MMM YYYY LT') %>
+      </td>
+      <td style="background-color: red">
+        <a class="btn btn-success" href="/users/edit/<%= item.id %>"
+          ><i class="fa-sharp fa-solid fa-pencil"></i
+        ></a>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-bs-toggle="modal"
+          data-bs-target="#deleteModal<%= item.id %>"
+        >
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+    <div
+      class="modal fade"
+      id="deleteModal<%= item.id %>"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              Delete Confirmation
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Apakah kamu yakin akan menghapus data "<%= item.title %>"?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              No
+            </button>
+            <a class="btn btn-warning" href="/users/delete/<%= item.id %>"
+              >Yes</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } else { %>
+    <tr>
+      <td><%= index + offset + 1 %></td>
+      <td><%= item.title %></td>
+      <td><%= item.complete? "Done" : "Not Yet" %></td>
+      <td>
+        <%= moment(item.deadline).locale('id').format('Do MMM YYYY LT') %>
+      </td>
+      <td>
+        <a class="btn btn-success" href="/users/edit/<%= item.id %>"
+          ><i class="fa-sharp fa-solid fa-pencil"></i
+        ></a>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-bs-toggle="modal"
+          data-bs-target="#deleteModal<%= item.id %>"
+        >
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+    <div
+      class="modal fade"
+      id="deleteModal<%= item.id %>"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              Delete Confirmation
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Apakah kamu yakin akan menghapus data "<%= item.title %>"?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              No
+            </button>
+            <a class="btn btn-warning" href="/users/delete/<%= item.id %>"
+              >Yes</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %> <% }) %>
+  </tbody>
+</table>
+<div
+  style="
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    background-color: rgb(245, 245, 245);
+    padding: 9px 10px;
+  "
+>
+  <div style="margin-top: 12px">
+    <a href="/users/add" class="btn btn-primary"
+      ><i class="fa-solid fa-plus" style="color: #ffffff"></i
+    ></a>
+  </div>
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end">
+      <li class="page-item">
+        <% if (page=='1' ) { %>
+        <a
+          class="page-link"
+          href="/users<%= url.replace(`page=${page}`,`page=${page}`) %>"
+          >&laquo;</a
+        >
+        <% } else { %>
+        <a
+          class="page-link"
+          href="/users<%= url.replace(`page=${page}`,`page=${page - 1}`) %>"
+          >&laquo;</a
+        >
+        <% } %>
+      </li>
+      <% for (let i=1; i <=pages; i++ ) { %> <% if (i==page) { %>
+      <li class="page-item active">
+        <a
+          class="page-link"
+          href="/users<%=url.replace(`page=${page}`, `page=${i}`) %>"
+        >
+          <%= i %>
+        </a>
+      </li>
+      <% } else { %>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="/users<%=url.replace(`page=${page}`, `page=${i}`) %>"
+        >
+          <%= i %>
+        </a>
+      </li>
+      <% } %> <% } %>
+      <li class="page-item">
+        <% if (page==pages ) { %>
+        <a
+          class="page-link"
+          href="/users<%= url.replace(`page=${page}`,`page=${page}`) %>"
+          >&raquo;</a
+        >
+        <% } else { %>
+        <a
+          class="page-link"
+          href="/users<%= url.replace(`page=${page}`,`page=${(page * 1) + 1}`) %>"
+          >&raquo;</a
+        >
+        <% } %>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<!-- <div class="notif" id="notif">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Delete Confirmation</h4>
+            <p class="close" onclick="off()">&times;</p>
+          </div>
+          <div class="modal-body">
+            <p id="ask"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="off-click" onclick="off()">No</button>
+            <a id="nextdelete" class="nextdel" href="#">Yes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+</div> -->
+
+<%- include('../partials/footer') %>

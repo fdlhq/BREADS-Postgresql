@@ -1,0 +1,48 @@
+<%- include('../partials/header') %>
+<div class="container">
+  <div class="title-header"><h1>Updating Data</h1></div>
+  <form action="" method="post">
+    <div class="row mb-3">
+      <label for="title" class="col-sm-2 col-form-label">Title</label>
+      <div class="col-sm-10">
+        <input
+          class="form-control"
+          type="text"
+          name="title"
+          id="title"
+          placeholder="Insert your title"
+          value="<%= item[0].title %>"
+        />
+      </div>
+    </div>
+    <div class="row mb-3">
+      <label for="title" class="col-sm-2 col-form-label">Deadline</label>
+      <div class="col-sm-10">
+        <input
+        type="date"
+        class="form-control"
+        name="deadline"
+        value="<%= moment(item[0].deadline).format('YYYY-MM-DD') %>"
+      />
+    </div>
+    </div>
+    <div class="row mb-3">
+      <label for="title" class="col-sm-2 col-form-label">Complete</label>
+      <div class="col-sm-10">
+        <input type="checkbox" id="complete" name="complete" <%=
+        item[0].complete? 'checked' : '' %> >
+        <label for="complete">Done</label>
+      </div>
+    </div>
+    <div style="padding: 10px; background-color: rgb(245, 245, 245);">
+    <button type="submit" class="btn btn-primary">
+      <i class="fa-solid fa-floppy-disk" style="color: #ffffff;"></i>
+    </button>
+    <a href="/users" class="btn btn-warning">
+      <i class="fa-solid fa-rotate"></i>
+    </a>
+  </div>
+    </div>
+  </form>
+
+<%- include('../partials/footer') %>
